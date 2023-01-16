@@ -54,3 +54,5 @@ Servicios gratis de Amazon:
 https://aws.amazon.com/free/
 
 Servicio LightSail son servidores pequeños para gente que está empezando. Es un servicio mucho más simple, pero también es mucho más difícil de conectar con otros servicios.
+
+# LINUX
