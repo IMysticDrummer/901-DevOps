@@ -56,3 +56,22 @@ https://aws.amazon.com/free/
 Servicio LightSail son servidores pequeños para gente que está empezando. Es un servicio mucho más simple, pero también es mucho más difícil de conectar con otros servicios.
 
 # LINUX
+
+En AWS para conectarse a una máquina ubuntu, el usuario es _ubuntu_.
+`ssh ubuntu@44.203.148.124`  
+Para conectarnos usando el certificado:  
+`ssh -i archivo-certificado.pem ubuntu@44.203.148.134`  
+Para que nos deje conectar tenemos que restringir los permisos del archivo: `chmod 0600`
+
+Subir archivos de una carpeta a través de ssh:  
+`scp -r -i archivo-certificado startbootstrap-freelancer-gh-pages ubuntu@44.203.148.124:/home/ubuntu`
+
+Recargar servicios en linux sin parar el servicio:  
+`sudo systemctl reload servicio (ssh por ejemplo)`  
+Comprobar el estado del servicio:  
+`sudo systemctl status servicio (ssh por ejemplo)`
+
+En linux, para dar permisos de acceso a otros usuarios a una carpeta, no sólo hay que dar permisos de lectura, sino que también hay dar **permisos de ejecución a la carpeta**.  
+Cuando se añade un usuario a un grupo, si el usuario está conectado, no coge automáticamente los cambios de grupos, hasta que el usuario no salga y vuelva a entrar.
+
+`systemctl` nos va a permitir manejar y comprobar todos aquellos programas que funcionen como procesos del sistema en ejecución.
