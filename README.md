@@ -75,3 +75,44 @@ En linux, para dar permisos de acceso a otros usuarios a una carpeta, no sólo h
 Cuando se añade un usuario a un grupo, si el usuario está conectado, no coge automáticamente los cambios de grupos, hasta que el usuario no salga y vuelva a entrar.
 
 `systemctl` nos va a permitir manejar y comprobar todos aquellos programas que funcionen como procesos del sistema en ejecución.
+
+Comando para reiniciar el servidor/ordenador `sudo reboot`.
+
+Aumentar la información recibida cuando queremos conectarnos, añadimos -v:  
+`ssh -v -i archivo-certificado.pem ubuntu@44.203.148.134`
+
+Hacer un enlace directo en linux:  
+`(sudo) ln -s archivo-origen-con-ruta-absoluta nombre-acceso-directo`
+
+## NGINX
+
+Comando para comprobar la sintaxis de la configuración de nginx: `sudo nginx -t`
+
+**OJO**  
+Cuando subamos aplicaciones REACT, después de hacer un build, hay que tener cuidado con la propiedad _homepage_ del package.json, ya que nos puede causar que busque los archivos en un directorio diferente a dónde estamos.  
+Además, cuando la aplicación lleve `react-router`, tenemos que tener en cuenta que el _location_ debemos llamar al index.html, antes del error 404, para que deje el enrutado a REACT.
+Antes:
+
+```
+server {
+    listen 80 default_server;  # escucha peticiones HTTP en el puerto 80 y actua como servidor por defecto
+    root /var/www/react-todo;  # busca los archivos de la web en /var/www/react-todo
+    index index.html;       # el archivo principal es index.html que estará en la carpeta /var/www/react-todo
+    location / {           # cualquier petición que empiece por /
+        try_files $uri $uri/ =404;  # intenta servir el archivo que piden en a $uri, si no existe, el de carpeta $uri, y si no, devuelve un 404
+    }
+}
+```
+
+Después:
+
+```
+server {
+    listen 80 default_server;  # escucha peticiones HTTP en el puerto 80 y actua como servidor por defecto
+    root /var/www/react-todo;  # busca los archivos de la web en /var/www/react-todo
+    index index.html;       # el archivo principal es index.html que estará en la carpeta /var/www/react-todo
+    location / {           # cualquier petición que empiece por /
+        try_files $uri $uri/ /index.html;  # intenta servir el archivo que piden en a $uri, si no existe, el de carpeta $uri, y si no, carga el index.html para que react gestione las rutas
+    }
+}
+```
