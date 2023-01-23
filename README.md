@@ -116,3 +116,59 @@ server {
     }
 }
 ```
+
+### Usar Nginx como proxi inverso
+
+Se añade otros archivos de configuración, pero **no** indicamos default_server, y configuramos los proxys a las DNS's adecuadas:
+
+```
+    server {
+
+        listen 80;
+        server_name VUESTRA-DNS-PUBLICA-DE-AMAZON;
+
+        location / {
+            proxy_pass http://127.0.0.1:3000;
+            proxy_redirect off;
+        }
+
+    }
+```
+
+### Usar Nginx como servidor también de proxy para aplicaciones webshocket
+
+Para que nginx propage la cabecera host, tal cual le llega, a nuestras aplicaciones, debemos añadir tres líneas más.  
+Sino, nginx hace un cambio del host a 127.0.0.1 y por tanto puede haber aplicaciones que no funcionen.
+
+```
+    server {
+
+        listen 80;
+        server_name VUESTRA-DNS-PUBLICA-DE-AMAZON;
+
+        location / {
+            proxy_pass http://127.0.0.1:3000;
+            proxy_redirect off;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "Upgrade";
+            proxy_set_header Host $host;
+        }
+    }
+```
+
+### Configurar nginx para que sirva los archivos estáticos en vez de nuestra aplicación
+
+Añadir antes de la location principal, otra location que busque y sirva los archivos estáticos.
+
+```
+            location ~ ^/(css/ | img/ | js/ | sounds/) {
+                root CARPETA-PRINCIPAL-DE-LA-QUE-CUELGAN-LOS-DIRECTORIOS-ESTÁTICOS
+        }
+    }
+```
+
+Lo primero es saber en qué direcciones (carpetas) tenemos nuestros archivos estáticos.
+
+La virgulilla `~` indica que vamos a utilizar una opción regular. `^` indica que la expresión empieza por /, sigue por css, o por img, o por js o por sounds... entonces vete a buscar los archivos a la capreta indicada.
+
+**Asegurar que los permisos de nginx (www-data) esté en el mismo grupo que chat, incorporándole, y así podrá acceder y ejecutar**
