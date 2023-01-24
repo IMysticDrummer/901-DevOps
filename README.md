@@ -172,3 +172,52 @@ Lo primero es saber en qué direcciones (carpetas) tenemos nuestros archivos est
 La virgulilla `~` indica que vamos a utilizar una opción regular. `^` indica que la expresión empieza por /, sigue por css, o por img, o por js o por sounds... entonces vete a buscar los archivos a la capreta indicada.
 
 **Asegurar que los permisos de nginx (www-data) esté en el mismo grupo que chat, incorporándole, y así podrá acceder y ejecutar**
+
+### MongoDb autenticacion con SCRAM
+
+**Código a usar**
+Desde mongosh, utilizamos este código para crear un usuario administrador:
+
+```
+use admin
+db.createUser(
+  {
+    user: "admin",
+    pwd: "j6vmUw45rlzXbCef",
+    roles: [
+      { role: "userAdminAnyDatabase", db: "admin" },
+      { role: "readWriteAnyDatabase", db: "admin" }
+    ]
+  }
+)
+```
+
+También se puede generar una pwd que nosotros queramos utilizando la función de mongo `passwordPrompt()`.
+
+**Ojo** Mongo nos deja conectarnos, pero no nos deja hacer nada sin habernos conectado... ni siquiera ver las bases de datos.
+
+Con esto hemos creado el usuario administrador de mongodb.
+Ahora tenemos que crear usuarios nuevos con sus permisos para trabajar.  
+En servidores, cada usuario debe tener su base de datos y usuario para sus trabajos.
+
+1. Creamos una base de datos para el usuario de programa (`use parsedb`).
+2. Creamos el usuario para ese programa/base de datos con sus roles asociados:
+   1. Usamos el mismo esquema que para el usuario administrador, pero con sus roles, nombres y contraseñas adecuadas:
+      ```
+          db.createUser(
+              {
+                  user: "parseusr",
+                  pwd: "C0ntr4s3n4",
+                  roles: [
+                      { role: "readWrite", db: "parsedb" }
+                  ]
+              }
+          )
+      ```
+
+Formato de una URL para acceder a un recurso:  
+<protocolo>://<usuario>:<contraseña>@<host>:<puerto>/<recurso>  
+Usaremos este protocolo para autenticarnos en mongo:  
+`mongodb://parseusr:C0ntr4s3n4@localhost:27017/parsedb`  
+Esto lo usaremos en las variables de entorno, para poder lanzar la aplicacion sin tocar el index.js.  
+**Nunca se cambia el código de lo que está en producción**. Las variables de entorno sirven para dar configuraciones específicas para el despliegue de la aplicación en los servidores.
