@@ -161,8 +161,8 @@ Sino, nginx hace un cambio del host a 127.0.0.1 y por tanto puede haber aplicaci
 Añadir antes de la location principal, otra location que busque y sirva los archivos estáticos.
 
 ```
-            location ~ ^/(css/ | img/ | js/ | sounds/) {
-                root CARPETA-PRINCIPAL-DE-LA-QUE-CUELGAN-LOS-DIRECTORIOS-ESTÁTICOS
+            location ~ ^/(css/|img/|js/|sounds/) { //indicar los directorios de los que cuelgan los archivos estáticos
+                root RUTA-COMPLETA-A-CARPETA-PRINCIPAL-DE-LA-QUE-CUELGAN-LOS-DIRECTORIOS-ESTÁTICOS
         }
     }
 ```
@@ -221,3 +221,6 @@ Usaremos este protocolo para autenticarnos en mongo:
 `mongodb://parseusr:C0ntr4s3n4@localhost:27017/parsedb`  
 Esto lo usaremos en las variables de entorno, para poder lanzar la aplicacion sin tocar el index.js.  
 **Nunca se cambia el código de lo que está en producción**. Las variables de entorno sirven para dar configuraciones específicas para el despliegue de la aplicación en los servidores.
+
+**Código de bash para obtener IP's que se intentan conectar a nuestro servidor y fallan**:  
+`grep "Failed password" /var/log/auth.log* | grep -Eo "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"`
